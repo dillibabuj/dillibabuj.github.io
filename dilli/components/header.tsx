@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -10,12 +12,29 @@ import { siteConfig } from "@/lib/config";
 export function Header() {
     const pathname = usePathname();
     const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return (
+            <header className="sticky top-0 z-50 w-full border-b border-neutral-200 bg-white/50 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/50">
+                <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
+                    <Link href="/" className="text-lg font-bold tracking-tight">
+                        Dilli Babu
+                    </Link>
+                </div>
+            </header>
+        )
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-neutral-200 bg-white/50 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/50">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
                 <Link href="/" className="text-lg font-bold tracking-tight">
-                    Portfolio
+                    Dilli Babu
                 </Link>
                 <nav className="flex items-center gap-6">
                     <ul className="hidden items-center gap-6 sm:flex">

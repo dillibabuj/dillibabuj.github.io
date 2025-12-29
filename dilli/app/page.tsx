@@ -17,7 +17,7 @@ export default function Home() {
         >
           <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl md:text-7xl">
             Hi, I'm{" "}
-            <span className="bg-gradient-to-r from-neutral-900 to-neutral-500 bg-clip-text text-transparent dark:from-white dark:to-neutral-500">
+            <span className="bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
               {siteConfig.name}
             </span>
             .
