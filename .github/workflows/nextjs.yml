@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./dilli  # <--- CRITICAL CHANGE: Build inside the subfolder
+        working-directory: ./dilli 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          # Cache needs to point to the lockfile in the subdir
           cache: ${{ steps.detect-package-manager.outputs.manager }}
           cache-dependency-path: ./dilli/package-lock.json 
       - name: Setup Pages
@@ -58,18 +57,27 @@ jobs:
         with:
           path: |
             dilli/.next/cache
-          # Updated hashFiles path
           key: ${{ runner.os }}-nextjs-${{ hashFiles('dilli/**/package-lock.json', 'dilli/**/yarn.lock') }}-${{ hashFiles('dilli/**.[jt]s', 'dilli/**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('dilli/**/package-lock.json', 'dilli/**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      
+      # FIX FOR SUBPATH ON USER PAGE:
+      # Prepare the artifact: Create a '_site' folder and put the build in '_site/dilli'
+      # So that when deployed, the content is served from 'user.github.io/dilli'
+      - name: Prepare Artifact
+        run: |
+          mkdir -p _site/dilli
+          cp -r out/* _site/dilli/
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dilli/out  # Upload the 'out' folder from the subdir
+          path: ./dilli/_site   # Upload the _site folder which contains 'dilli/index.html'
 
   # Deployment job
   deploy:
